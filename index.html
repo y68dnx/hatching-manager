@@ -6,7 +6,8 @@
     <title>مفقس ابو يوسف الطائي</title>
     
     <meta name="theme-color" content="#d4af37">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/launchericon-192x192.png">
+    <link rel="manifest" href="manifest.json">
     
     <!-- الخطوط والمكتبات الأساسية -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -20,7 +21,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('./service-worker.js')
                     .then(reg => console.log('✅ Service Worker registered', reg))
                     .catch(err => console.log('❌ Service Worker error', err));
             });
@@ -1232,7 +1233,7 @@
                     if (tasks.length > 0 && Notification.permission === 'granted') {
                         new Notification('📋 مهام اليوم', {
                             body: `لديك ${tasks.length} مهام اليوم`,
-                            icon: '/icons/icon-192.png'
+                            icon: 'icons/launchericon-192x192.png'
                         });
                     }
                 },
@@ -1534,37 +1535,6 @@
         window.hatcheryApp = hatcheryApp;
     </script>
 
-    <!-- إنشاء manifest.json ديناميكياً -->
-    <script>
-        (function() {
-            const manifest = {
-                "name": "مفقس ابو يوسف الطائي",
-                "short_name": "المفقس",
-                "description": "نظام إدارة المفقس المتكامل",
-                "start_url": "/",
-                "display": "standalone",
-                "background_color": "#0a0a0a",
-                "theme_color": "#d4af37",
-                "orientation": "portrait",
-                "icons": [
-                    { "src": "icons/icon-72.png", "sizes": "72x72", "type": "image/png" },
-                    { "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" },
-                    { "src": "icons/icon-128.png", "sizes": "128x128", "type": "image/png" },
-                    { "src": "icons/icon-144.png", "sizes": "144x144", "type": "image/png" },
-                    { "src": "icons/icon-152.png", "sizes": "152x152", "type": "image/png" },
-                    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }
-                ]
-            };
-            const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            let link = document.querySelector('link[rel="manifest"]');
-            if (!link) {
-                link = document.createElement('link');
-                link.rel = 'manifest';
-                document.head.appendChild(link);
-            }
-            link.href = url;
-        })();
-    </script>
+    <!-- تم حذف الكود الديناميكي لـ manifest.json -->
 </body>
 </html>
