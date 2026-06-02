@@ -610,6 +610,14 @@
         <!-- ========== قسم الإعدادات ========== -->
         <div x-show="currentTab === 'settings'">
             
+            <!-- زر التثبيت اليدوي -->
+            <div class="card glass-panel" x-show="showInstallButton" style="text-align: center;">
+                <button class="btn btn-gold" @click="installApp" style="font-size: 1.2rem;">
+                    📲 تثبيت التطبيق على جهازك
+                </button>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">اضغط لتثبيت التطبيق على الشاشة الرئيسية</p>
+            </div>
+
             <div class="card glass-panel">
                 <h3 style="color:var(--gold); margin-top:0">🖼️ المظهر والصوت</h3>
                 <button class="btn" :class="musicPlaying ? 'btn-red' : 'btn-green'" @click="toggleMusic()" style="margin-bottom:15px"><span x-text="musicPlaying ? '⏸️ إيقاف الموسيقى' : '▶️ تشغيل الموسيقى'"></span></button>
@@ -800,6 +808,10 @@
                 selectedClient: null,
                 clients: [],
 
+                // متغيرات التثبيت اليدوي
+                showInstallButton: false,
+                deferredPrompt: null,
+
                 // ========== دالة التهيئة ==========
                 initApp() {
                     try { this.batches = JSON.parse(localStorage.getItem('royal_v7_bat')) || []; } catch(e) { this.batches = []; }
@@ -852,6 +864,31 @@
                             this.showToast(`🔔 ${payload.notification.title}`);
                         });
                     }
+
+                    // مستمع حدث التثبيت
+                    window.addEventListener('beforeinstallprompt', (e) => {
+                        e.preventDefault();
+                        this.deferredPrompt = e;
+                        this.showInstallButton = true;
+                        console.log('✅ حدث التثبيت جاهز');
+                    });
+                },
+
+                // دالة التثبيت اليدوي
+                async installApp() {
+                    if (!this.deferredPrompt) {
+                        this.showToast('التثبيت غير متاح حالياً، حاول لاحقاً');
+                        return;
+                    }
+                    this.deferredPrompt.prompt();
+                    const { outcome } = await this.deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        this.showInstallButton = false;
+                        this.showToast('✅ تم تثبيت التطبيق بنجاح');
+                    } else {
+                        this.showToast('❌ تم إلغاء التثبيت');
+                    }
+                    this.deferredPrompt = null;
                 },
 
                 // بناء قائمة العملاء
